@@ -1,15 +1,12 @@
 import numpy as np
 import pandas as pd
+import tensorflow as tensorflow
 from tensorflow.keras.preprocessing import sequence
 import csv
 from sklearn.model_selection import train_test_split
-
+from tensorflow import keras
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Bidirectional, LSTM, Masking
-from keras.layers.convolutional import Convolution1D
-from keras.layers.core import Dropout, Activation, Flatten
-from keras.layers.advanced_activations import LeakyReLU
-from keras.optimizers import *
+from tensorflow.keras.layers import Dense, Bidirectional, LSTM, Masking, Convolution1D, Dropout, Activation
 from tensorflow.keras.callbacks import EarlyStopping
 
 import matplotlib.pyplot as plt
@@ -112,7 +109,7 @@ model.add(Dense(1, activation='sigmoid'))
 
 print(model.summary())
 
-model.compile(loss='binary_crossentropy', optimizer=Adam())
+model.compile(loss='binary_crossentropy', optimizer=tensorflow.keras.optimizers.Adam())
 # Early stopping if the validaton Loss does not decrease for 100 epochs
 early_stopping = EarlyStopping(monitor='val_loss', patience = 50)
 
