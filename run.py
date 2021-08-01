@@ -69,8 +69,11 @@ for ids in x_id:
     po_val.append(df[6])
     cf_val.append(df[11])
 po_val = np.asarray(po_val).astype(np.float64)
+np.savetxt("po_val.csv", po_val, delimiter=",")
 cf_val = np.asarray(cf_val).astype(np.float64)
+np.savetxt("cf_val.csv", cf_val, delimiter=",")
 ts_val = po_val + cf_val
+np.savetxt("ts_val.csv", ts_val, delimiter=",")
 print("shape of CF: ", cf_val.shape)
 print("shape of PO: ", po_val.shape)
 print("shape of TS: ", ts_val.shape)
@@ -105,83 +108,83 @@ timesteps = 2500
 nr = 77   
 n_dim = 11  
 
-model = Sequential()
-model.add(Masking(mask_value=0, input_shape=(2500, n_dim)))
-model.add(Bidirectional(LSTM(200, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim)))
-model.add(Dropout(0.3))
+# model = Sequential()
+# model.add(Masking(mask_value=0, input_shape=(2500, n_dim)))
+# model.add(Bidirectional(LSTM(200, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim)))
+# model.add(Dropout(0.3))
 
-model.add(Bidirectional(LSTM(100, recurrent_dropout = 0.5,return_sequences = True)))
-model.add(Dropout(0.2))
+# model.add(Bidirectional(LSTM(100, recurrent_dropout = 0.5,return_sequences = True)))
+# model.add(Dropout(0.2))
 
-model.add(Convolution1D(16, 1))
-model.add(Activation('sigmoid'))
-
-model.add(Convolution1D(8, 1))
-model.add(Activation('sigmoid'))
-
-# model.add(Convolution1D(1, 2500))
+# model.add(Convolution1D(16, 1))
 # model.add(Activation('sigmoid'))
 
-model.add(Bidirectional(LSTM(10, recurrent_dropout = 0.5)))
-model.add(Dropout(0.25))
+# model.add(Convolution1D(8, 1))
+# model.add(Activation('sigmoid'))
 
-model.add(Dense(1, activation='sigmoid'))
+# # model.add(Convolution1D(1, 2500))
+# # model.add(Activation('sigmoid'))
 
-print(model.summary())
+# model.add(Bidirectional(LSTM(10, recurrent_dropout = 0.5)))
+# model.add(Dropout(0.25))
 
-model.compile(loss='binary_crossentropy', optimizer=Adam())
-# Early stopping if the validaton Loss does not decrease for 100 epochs
-early_stopping = EarlyStopping(monitor='val_loss', patience = 50)
+# model.add(Dense(1, activation='sigmoid'))
 
-t = now()
-history = model.fit(x_train,y_train,batch_size=5, epochs=1000, verbose=1,
-                    validation_data=(x_test,y_test),callbacks = [early_stopping])
-print('Training time: %s' % (now() - t))
+# print(model.summary())
 
-# Plot the results
-plt.figure(1)
-plt.subplot(221)
-plt.plot(history.history['loss'])
-plt.title('Training Loss')
-plt.subplot(222)
-plt.plot(history.history['val_loss'])
-plt.title('Validation Loss')
-plt.tight_layout()
-plt.show()
+# model.compile(loss='binary_crossentropy', optimizer=Adam())
+# # Early stopping if the validaton Loss does not decrease for 100 epochs
+# early_stopping = EarlyStopping(monitor='val_loss', patience = 50)
 
-# Plot the prediction of the CNN model for the training and validation sets
-pred_test = model.predict(x_test)
-pred_test = pred_test.reshape(x_test.shape[0])
-pred_train = model.predict(x_train)
-pred_train = pred_train.reshape(x_train.shape[0])
+# t = now()
+# history = model.fit(x_train,y_train,batch_size=5, epochs=1000, verbose=1,
+#                     validation_data=(x_test,y_test),callbacks = [early_stopping])
+# print('Training time: %s' % (now() - t))
 
-plt.figure(figsize = (8,8))
-plt.subplot(2,1,1)
-plt.plot(pred_train,'s', color='red', label='Prediction', linestyle='None', alpha = 0.5, markersize=6)
-plt.plot(y_train,'o', color='green',label='Quality Score', alpha = 0.4, markersize=6)
-plt.ylim([-0.1,1.1])
-plt.title('Training Set',fontsize=18)
-plt.xlabel('Sequence Number',fontsize=16)
-plt.ylabel('Quality Scale',fontsize=16)
-plt.legend(loc=3, prop={'size':14}) # loc:position
-plt.subplot(2,1,2)
-plt.plot(pred_test,'s', color='red', label='Prediction', linestyle='None', alpha = 0.5, markersize=6)
-plt.plot(y_test,'o', color='green',label='Quality Score', alpha = 0.4, markersize=6)
-plt.title('Testing Set',fontsize=18)
-plt.ylim([-0.1,1.1])
-plt.xlabel('Sequence Number',fontsize=16)
-plt.ylabel('Quality Score',fontsize=16)
-plt.legend(loc=3, prop={'size':14}) # loc:position
-plt.tight_layout()
-#     plt.savefig('../../Results/CNN_Vicon_Scores.png', dpi=300)
-plt.show()
+# # Plot the results
+# plt.figure(1)
+# plt.subplot(221)
+# plt.plot(history.history['loss'])
+# plt.title('Training Loss')
+# plt.subplot(222)
+# plt.plot(history.history['val_loss'])
+# plt.title('Validation Loss')
+# plt.tight_layout()
+# plt.show()
+
+# # Plot the prediction of the CNN model for the training and validation sets
+# pred_test = model.predict(x_test)
+# pred_test = pred_test.reshape(x_test.shape[0])
+# pred_train = model.predict(x_train)
+# pred_train = pred_train.reshape(x_train.shape[0])
+
+# plt.figure(figsize = (8,8))
+# plt.subplot(2,1,1)
+# plt.plot(pred_train,'s', color='red', label='Prediction', linestyle='None', alpha = 0.5, markersize=6)
+# plt.plot(y_train,'o', color='green',label='Quality Score', alpha = 0.4, markersize=6)
+# plt.ylim([-0.1,1.1])
+# plt.title('Training Set',fontsize=18)
+# plt.xlabel('Sequence Number',fontsize=16)
+# plt.ylabel('Quality Scale',fontsize=16)
+# plt.legend(loc=3, prop={'size':14}) # loc:position
+# plt.subplot(2,1,2)
+# plt.plot(pred_test,'s', color='red', label='Prediction', linestyle='None', alpha = 0.5, markersize=6)
+# plt.plot(y_test,'o', color='green',label='Quality Score', alpha = 0.4, markersize=6)
+# plt.title('Testing Set',fontsize=18)
+# plt.ylim([-0.1,1.1])
+# plt.xlabel('Sequence Number',fontsize=16)
+# plt.ylabel('Quality Score',fontsize=16)
+# plt.legend(loc=3, prop={'size':14}) # loc:position
+# plt.tight_layout()
+# #     plt.savefig('../../Results/CNN_Vicon_Scores.png', dpi=300)
+# plt.show()
 
 
-# Calculate the cumulative deviation and rms deviation for the validation set
-test_dev = abs(np.squeeze(pred_test)-y_test)
-# Cumulative deviation
-mean_abs_dev = np.mean(test_dev)
-# RMS deviation
-rms_dev = sqrt(mean_squared_error(pred_test, y_test))
-print('Mean absolute deviation:', mean_abs_dev)
-print('RMS deviation:', rms_dev)
+# # Calculate the cumulative deviation and rms deviation for the validation set
+# test_dev = abs(np.squeeze(pred_test)-y_test)
+# # Cumulative deviation
+# mean_abs_dev = np.mean(test_dev)
+# # RMS deviation
+# rms_dev = sqrt(mean_squared_error(pred_test, y_test))
+# print('Mean absolute deviation:', mean_abs_dev)
+# print('RMS deviation:', rms_dev)
