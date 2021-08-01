@@ -111,10 +111,10 @@ print(model.summary())
 
 model.compile(loss='binary_crossentropy', optimizer=tensorflow.keras.optimizers.Adam())
 # Early stopping if the validaton Loss does not decrease for 100 epochs
-early_stopping = EarlyStopping(monitor='val_loss', patience = 50)
+early_stopping = EarlyStopping(monitor='val_loss', patience = 100)
 
 t = now()
-history = model.fit(x_train,y_train,batch_size=5, epochs=1, verbose=1,
+history = model.fit(x_train,y_train,batch_size=5, epochs=1000, verbose=1,
                     validation_data=(x_test,y_test),callbacks = [early_stopping])
 print('Training time: %s' % (now() - t))
 
