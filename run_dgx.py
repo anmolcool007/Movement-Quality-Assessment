@@ -114,7 +114,7 @@ model.compile(loss='binary_crossentropy', optimizer=tensorflow.keras.optimizers.
 early_stopping = EarlyStopping(monitor='val_loss', patience = 50)
 
 t = now()
-history = model.fit(x_train,y_train,batch_size=5, epochs=1000, verbose=1,
+history = model.fit(x_train,y_train,batch_size=5, epochs=1, verbose=1,
                     validation_data=(x_test,y_test),callbacks = [early_stopping])
 print('Training time: %s' % (now() - t))
 
@@ -127,7 +127,7 @@ plt.subplot(222)
 plt.plot(history.history['val_loss'])
 plt.title('Validation Loss')
 plt.tight_layout()
-plt.show()
+plt.savefig("./graph2.png", dpi=300)
 
 # Plot the prediction of the CNN model for the training and validation sets
 pred_test = model.predict(x_test)
@@ -153,8 +153,7 @@ plt.xlabel('Sequence Number',fontsize=16)
 plt.ylabel('Quality Score',fontsize=16)
 plt.legend(loc=3, prop={'size':14}) # loc:position
 plt.tight_layout()
-#     plt.savefig('../../Results/CNN_Vicon_Scores.png', dpi=300)
-plt.show()
+plt.savefig('./graph1.png', dpi=300)
 
 
 # Calculate the cumulative deviation and rms deviation for the validation set
@@ -165,3 +164,8 @@ mean_abs_dev = np.mean(test_dev)
 rms_dev = sqrt(mean_squared_error(pred_test, y_test))
 print('Mean absolute deviation:', mean_abs_dev)
 print('RMS deviation:', rms_dev)
+
+ans = np.arange(2)
+ans[0] = mean_abs_dev
+ans[1] = rms_dev
+np.savetxt("ans.csv",ans, delimiter=",")
