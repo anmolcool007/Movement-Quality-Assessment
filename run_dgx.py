@@ -1,16 +1,16 @@
 import numpy as np
 import pandas as pd
-from keras.preprocessing import sequence
+from tensorflow.keras.preprocessing import sequence
 import csv
 from sklearn.model_selection import train_test_split
 
-from keras.models import Sequential
-from keras.layers import Dense, Bidirectional, LSTM, Masking
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Bidirectional, LSTM, Masking
 from keras.layers.convolutional import Convolution1D
 from keras.layers.core import Dropout, Activation, Flatten
 from keras.layers.advanced_activations import LeakyReLU
 from keras.optimizers import *
-from keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping
 
 import matplotlib.pyplot as plt
 
