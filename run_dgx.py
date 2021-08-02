@@ -39,7 +39,7 @@ for ids, vals in types.items():
     for i in range(1,vals+1):
         x_id.append(ids + str(i))
         try: 
-            with open("./po-cf-ex-1-features/"+ids+str(i)+".csv", 'r') as f:
+            with open("/workspace/data/po-cf-ex-1-features/"+ids+str(i)+".csv", 'r') as f:
                 temp = list(csv.reader(f, delimiter = ","))
             temp = process(temp)
             temp = np.asarray(temp)
@@ -55,7 +55,7 @@ print("x_val shape:", x_val.shape)
 length = x_val.shape[0]
 
 
-df = pd.read_csv("./dgx_data/ts_val.csv",header=None)
+df = pd.read_csv("/workspace/data/Movement-Quality-Assessment/dgx_data/ts_val.csv",header=None)
 print(df)
 ts_val = np.array(df).astype(np.float32)
 print("ts_val shape:",ts_val.shape)
@@ -127,7 +127,7 @@ plt.subplot(222)
 plt.plot(history.history['val_loss'])
 plt.title('Validation Loss')
 plt.tight_layout()
-plt.savefig("./graph2.png", dpi=300)
+plt.savefig("/workspace/data/Movement-Quality-Assessment/graph2.png", dpi=300)
 
 # Plot the prediction of the CNN model for the training and validation sets
 pred_test = model.predict(x_test)
@@ -153,7 +153,7 @@ plt.xlabel('Sequence Number',fontsize=16)
 plt.ylabel('Quality Score',fontsize=16)
 plt.legend(loc=3, prop={'size':14}) # loc:position
 plt.tight_layout()
-plt.savefig('./graph1.png', dpi=300)
+plt.savefig('/workspace/data/Movement-Quality-Assessment/graph1.png', dpi=300)
 
 
 # Calculate the cumulative deviation and rms deviation for the validation set
@@ -168,4 +168,4 @@ print('RMS deviation:', rms_dev)
 ans = np.arange(2)
 ans[0] = mean_abs_dev
 ans[1] = rms_dev
-np.savetxt("ans.csv",ans, delimiter=",")
+np.savetxt("/workspace/data/Movement-Quality-Assessment/ans.csv",ans, delimiter=",")
