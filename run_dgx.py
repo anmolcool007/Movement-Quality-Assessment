@@ -39,7 +39,7 @@ for ids, vals in types.items():
     for i in range(1,vals+1):
         x_id.append(ids + str(i))
         try: 
-            with open("/workspace/data/po-cf-ex-1-features/"+ids+str(i)+".csv", 'r') as f:
+            with open("/workspace/data/Movement-Quality-Assessment/po-cf-ex-1-features/"+ids+str(i)+".csv", 'r') as f:
                 temp = list(csv.reader(f, delimiter = ","))
             temp = process(temp)
             temp = np.asarray(temp)
@@ -50,27 +50,33 @@ for ids, vals in types.items():
         x_val.append(temp)
 
 x_val = np.asarray(sequence.pad_sequences(x_val, padding='post',maxlen=2500)).astype(np.float64)
+
+print("--- reading x_val and performing post-padding ---")
+
 print("x_val shape:", x_val.shape)
 
 length = x_val.shape[0]
 
 
 df = pd.read_csv("/workspace/data/Movement-Quality-Assessment/dgx_data/ts_val.csv",header=None)
-print(df)
 ts_val = np.array(df).astype(np.float32)
+
+print("--- reading ts_val ---")
+
 print("ts_val shape:",ts_val.shape)
 
+print("--- randomizing ---")
 indices = np.arange(len(ts_val))
 indices = jumble_up(indices)
 temp_x = x_val
 x_val = []
 temp_ts = ts_val
 ts_val = []
-indices[0]
 for i in range(length):
     x_val.append(temp_x[indices[i]])
     ts_val.append(temp_ts[indices[i]])
 
+print("--- normalizing ---")
 
 max_x_val = -1
 max_ts_val = -1
@@ -79,7 +85,15 @@ for i in range(len(ts_val)):
     max_ts_val = max(max_ts_val, np.max(np.abs(ts_val[i])))
 x_val = x_val/max_x_val
 ts_val = ts_val/max_ts_val
+
+print("--- performing train-test split ---")
+
 x_train, x_test, y_train, y_test = train_test_split(x_val,ts_val, test_size=0.3)
+
+print("x_train", x_train.shape)
+print("y_train", y_train.shape)
+print("x_test", x_test.shape)
+print("y_test", y_test.shape)
 
 timesteps = 2500 
 nr = 77   
@@ -87,22 +101,17 @@ n_dim = 11
 
 model = Sequential()
 model.add(Masking(mask_value=0, input_shape=(2500, n_dim)))
-model.add(Bidirectional(LSTM(200, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim)))
+model.add(LSTM(50, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim))
 model.add(Dropout(0.3))
 
-model.add(Bidirectional(LSTM(100, recurrent_dropout = 0.5,return_sequences = True)))
+model.add(LSTM(25, recurrent_dropout = 0.5,return_sequences = True))
 model.add(Dropout(0.2))
 
-model.add(Convolution1D(16, 1))
-model.add(Activation('sigmoid'))
-
-model.add(Convolution1D(8, 1))
-model.add(Activation('sigmoid'))
+model.add(Convolution1D(16, 3), activations='sigmoid')
 
 # model.add(Convolution1D(1, 2500))
-# model.add(Activation('sigmoid'))
 
-model.add(Bidirectional(LSTM(10, recurrent_dropout = 0.5)))
+model.add(LSTM(10, recurrent_dropout = 0.5))
 model.add(Dropout(0.25))
 
 model.add(Dense(1, activation='sigmoid'))
@@ -110,11 +119,10 @@ model.add(Dense(1, activation='sigmoid'))
 print(model.summary())
 
 model.compile(loss='binary_crossentropy', optimizer=tensorflow.keras.optimizers.Adam())
-# Early stopping if the validaton Loss does not decrease for 100 epochs
 early_stopping = EarlyStopping(monitor='val_loss', patience = 100)
 
 t = now()
-history = model.fit(x_train,y_train,batch_size=5, epochs=1000, verbose=1,
+history = model.fit(x_train,y_train, epochs=200, verbose=1,
                     validation_data=(x_test,y_test),callbacks = [early_stopping])
 print('Training time: %s' % (now() - t))
 
