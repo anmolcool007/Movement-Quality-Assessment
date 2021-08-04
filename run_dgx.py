@@ -101,10 +101,10 @@ n_dim = 11
 
 model = Sequential()
 model.add(Masking(mask_value=0, input_shape=(2500, n_dim)))
-model.add(LSTM(50, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim))
+model.add(LSTM(200, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim))
 model.add(Dropout(0.3))
 
-model.add(LSTM(25, recurrent_dropout = 0.5,return_sequences = True))
+model.add(LSTM(100, recurrent_dropout = 0.5,return_sequences = True))
 model.add(Dropout(0.2))
 
 model.add(Convolution1D(16, 3), activations='sigmoid')
@@ -119,10 +119,11 @@ model.add(Dense(1, activation='sigmoid'))
 print(model.summary())
 
 model.compile(loss='binary_crossentropy', optimizer=tensorflow.keras.optimizers.Adam())
+# Early stopping if the validaton Loss does not decrease for 100 epochs
 early_stopping = EarlyStopping(monitor='val_loss', patience = 100)
 
 t = now()
-history = model.fit(x_train,y_train, epochs=200, verbose=1,
+history = model.fit(x_train,y_train,batch_size=5, epochs=1000, verbose=1,
                     validation_data=(x_test,y_test),callbacks = [early_stopping])
 print('Training time: %s' % (now() - t))
 

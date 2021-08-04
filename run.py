@@ -111,22 +111,18 @@ n_dim = 11
 
 model = Sequential()
 model.add(Masking(mask_value=0, input_shape=(2500, n_dim)))
-model.add(Bidirectional(LSTM(200, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim)))
+model.add(LSTM(50, recurrent_dropout = 0.5, return_sequences = True))
 model.add(Dropout(0.3))
 
-model.add(Bidirectional(LSTM(100, recurrent_dropout = 0.5,return_sequences = True)))
+model.add(LSTM(25, recurrent_dropout = 0.5,return_sequences = True))
 model.add(Dropout(0.2))
 
-model.add(Convolution1D(16, 1))
-model.add(Activation('sigmoid'))
-
-model.add(Convolution1D(8, 1))
+model.add(Convolution1D(16, 3))
 model.add(Activation('sigmoid'))
 
 # model.add(Convolution1D(1, 2500))
-# model.add(Activation('sigmoid'))
 
-model.add(Bidirectional(LSTM(10, recurrent_dropout = 0.5)))
+model.add(LSTM(10, recurrent_dropout = 0.5))
 model.add(Dropout(0.25))
 
 model.add(Dense(1, activation='sigmoid'))
@@ -134,7 +130,7 @@ model.add(Dense(1, activation='sigmoid'))
 print(model.summary())
 
 # model.compile(loss='binary_crossentropy', optimizer=Adam())
-model.compile(loss=KLDivergence(), optimizer=Adam())
+model.compile(loss='binary_crossentropy', optimizer=Adam())
 # Early stopping if the validaton Loss does not decrease for 100 epochs
 early_stopping = EarlyStopping(monitor='val_loss', patience = 50)
 
