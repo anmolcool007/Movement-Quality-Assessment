@@ -101,20 +101,23 @@ n_dim = 11
 
 model = Sequential()
 model.add(Masking(mask_value=0, input_shape=(2500, n_dim)))
-model.add(LSTM(200, recurrent_dropout = 0.5, return_sequences = True), input_shape = (None,n_dim))
+model.add(Convolution1D(128,3,activation='relu'))
+model.add(Convolution1D(64,3,activation='relu'))
+model.add(LSTM(50, return_sequences = True))
 model.add(Dropout(0.3))
 
-model.add(LSTM(100, recurrent_dropout = 0.5,return_sequences = True))
+model.add(LSTM(30))
 model.add(Dropout(0.2))
 
-model.add(Convolution1D(16, 3), activations='sigmoid')
+# model.add(Convolution1D(16, 3))
+# model.add(Activation('sigmoid'))
 
 # model.add(Convolution1D(1, 2500))
 
-model.add(LSTM(10, recurrent_dropout = 0.5))
-model.add(Dropout(0.25))
+# model.add(LSTM(10, recurrent_dropout = 0.5))
+# model.add(Dropout(0.25))
 
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(1, activation='softmax'))
 
 print(model.summary())
 
