@@ -112,7 +112,7 @@ for i in range(77):
 #         print(i)
 # print("ts_val shape:",ts_val.shape)
 
-df = pd.read_csv("./dgx_data/ts_val.csv",header=None)
+df = pd.read_csv("/workspace/data/Movement-Quality-Assessment/dgx_data/ts_val.csv",header=None)
 ts_val = np.array(df).astype(np.float32)
 
 print("-- randomize --")
